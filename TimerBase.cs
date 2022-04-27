@@ -2,6 +2,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Timers;
+using Cronos;
 
 namespace Extensions.BaseClass
 {
@@ -74,10 +76,13 @@ namespace Extensions.BaseClass
 
             GetScheduler(_schedule);
 
-            await ScheduleFirstJob();
+            bool readyToRun = await ScheduleFirstJob();
+
+            if (!readyToRun && !_appLifetime.ApplicationStopping.IsCancellationRequested)
+                _appLifetime.StopApplication();
         }
 
-        private async Task ScheduleFirstJob()
+        private async Task<bool> ScheduleFirstJob()
         {
             bool readyToRun = ScheduleJob();
 
@@ -95,8 +100,14 @@ namespace Extensions.BaseClass
                     _logger.LogTrace("Updated start delay time ({0:c}) and finish time ({1:c}).", _startDelay, _finishDelay);
                 }
             }
-            if (readyToRun && CheckIsReadyToRun())
+
+            if (readyToRun)
+            {
+                readyToRun &= CheckIsReadyToRun();
                 await StartTimerAsync();
+            }
+
+            return readyToRun;
         }
 
         protected abstract DateTimeOffset? GetScheduledStart();
