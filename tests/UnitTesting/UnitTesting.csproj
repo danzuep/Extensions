@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IEnumerableExtensions\IEnumerableExtensions.csproj" />
-    <ProjectReference Include="..\MailKitExtensions\MailKitExtensions.csproj" />
+    <ProjectReference Include="..\..\source\IEnumerableExtensions\IEnumerableExtensions.csproj" />
+    <ProjectReference Include="..\..\source\MailKitExtensions\MailKitExtensions.csproj" />
   </ItemGroup>
 
 </Project>

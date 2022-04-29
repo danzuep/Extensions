@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{C48D0AA7-C328-46BB-863F-D91D2729C92E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTesting", "tests\UnitTesting\UnitTesting.csproj", "{C48D0AA7-C328-46BB-863F-D91D2729C92E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEnumerableExtensions", "IEnumerableExtensions\IEnumerableExtensions.csproj", "{92DEA222-A320-4E94-A8DE-5CF9D8D21EF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IEnumerableExtensions", "source\IEnumerableExtensions\IEnumerableExtensions.csproj", "{92DEA222-A320-4E94-A8DE-5CF9D8D21EF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKitExtensions", "MailKitExtensions\MailKitExtensions.csproj", "{2094AA6C-2C29-450F-85D1-27E32390E2FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKitExtensions", "source\MailKitExtensions\MailKitExtensions.csproj", "{2094AA6C-2C29-450F-85D1-27E32390E2FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
