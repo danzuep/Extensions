@@ -1,4 +1,10 @@
-namespace Extensions.IEnumerable
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace Extensions.IEnumerables
 {
     public static class IEnumerableExtensions
     {
@@ -8,10 +14,13 @@ namespace Extensions.IEnumerable
 
         public static bool IsNotNullOrEmpty<T>(
             this IEnumerable<T> enumerable)
-            => enumerable is not null && enumerable.Any();
+            => enumerable != null && enumerable.Any();
+
+        public static bool IsNullOrEmpty<T>(
+            this ICollection<T> list) => list.IsNotNullOrEmpty();
 
         public static bool IsNotNullOrEmpty<T>(
-            this IList<T> list) => list?.Count > 0;
+            this ICollection<T> list) => list?.Count > 0;
 
         public static string FirstOrBlank(
             this IEnumerable<string> enumerable)
@@ -24,7 +33,7 @@ namespace Extensions.IEnumerable
         public static IList<T> TryAdd<T>(
             this IList<T> list, T item)
         {
-            if (list is not null && item is not null)
+            if (list != null && item != null)
                 list.Add(item);
             return list ?? Array.Empty<T>();
         }
@@ -41,9 +50,9 @@ namespace Extensions.IEnumerable
             => data is null ? "" : string.Join(div,
                 data.Select(o => o?.ToString() ?? ""));
 
-        public static string ToEnumeratedNames<T>(
-            this IEnumerable<T?> data, string div = ", ") where T : struct, Enum //Nullable<Enum>
-            => data?.Select(d => d.GetName()).ToEnumeratedString(div) ?? "";
+        //public static string ToEnumeratedNames<T>(
+        //    this IEnumerable<T?> data, string div = ", ") where T : struct, Enum //Nullable<Enum>
+        //    => data?.Select(d => d.GetName()).ToEnumeratedString(div) ?? "";
 
         public static async Task<IEnumerable<TResult>> SelectAsync<TSource, TResult>(
             this IEnumerable<TSource> source, Func<TSource, Task<TResult>> method, int concurrency = int.MaxValue)
@@ -74,7 +83,7 @@ namespace Extensions.IEnumerable
             this IEnumerable<TSource> items, Func<TSource, TResult> method, CancellationToken ct = default)
         {
             IList<TResult> results = new List<TResult>();
-            if (items is not null)
+            if (items != null)
                 foreach (var item in items)
                     if (!ct.IsCancellationRequested)
                         results.Add(method(item));
@@ -85,7 +94,7 @@ namespace Extensions.IEnumerable
         public static void ActionEach<T>( //TODO test
             this IEnumerable<T> items, Action<T> action)
         {
-            if (items is not null)
+            if (items != null)
                 foreach (var item in items)
                     action(item);
         }
