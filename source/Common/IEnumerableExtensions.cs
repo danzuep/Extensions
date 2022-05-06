@@ -13,7 +13,7 @@ namespace Zue.Common
             => enumerable != null && enumerable.Any();
 
         public static bool IsNullOrEmpty<T>(
-            [NotNullWhen(false)] this ICollection<T> list) => list.IsNotNullOrEmpty();
+            [NotNullWhen(false)] this ICollection<T> list) => !list.IsNotNullOrEmpty();
 
         public static bool IsNotNullOrEmpty<T>(
             [NotNullWhen(true)] this ICollection<T> list) => list?.Count > 0;
