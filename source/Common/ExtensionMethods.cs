@@ -36,6 +36,27 @@ namespace Zue.Common
             return singular + "s";
         }
 
+        //// https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-character-encoding
+        //public static readonly JsonSerializerOptions JsonOptions =
+        //    new JsonSerializerOptions() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+
+        //public static string Serialise<T>(T data, bool useOptions = false)
+        //{
+        //    var jsonOptions = useOptions ? JsonOptions : null;
+        //    return System.Text.Json.JsonSerializer.Serialize(data, jsonOptions);
+        //}
+
+        //// Serializing to a UTF-8 byte array is about 5-10% faster than using the string-based methods.
+        //public static byte[] SerialiseToUtf8Bytes<T>(T data)
+        //{
+        //    return JsonSerializer.SerializeToUtf8Bytes(data);
+        //}
+
+        //public static async Task SerialiseAsync(Stream data, object value)
+        //{
+        //    await JsonSerializer.SerializeAsync(data, value);
+        //}
+
         public static TimeSpan GetDelayFromNow(this TimeSpan relativeTime)
             => relativeTime.GetAbsoluteTime().GetDelayFromNow();
 

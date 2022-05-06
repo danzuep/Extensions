@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Xunit;
-using Extensions.IEnumerables;
 
 namespace Extensions
 {
@@ -11,7 +11,7 @@ namespace Extensions
         public void Test1()
         {
             IEnumerable<string> test = Array.Empty<string>();
-            Assert.True(test.IsNullOrEmpty());
+            Assert.True(!test?.Any() ?? true);
         }
     }
 }

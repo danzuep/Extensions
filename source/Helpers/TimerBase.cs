@@ -2,10 +2,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Timer = System.Threading.Timer;
 using System.Timers;
 using Cronos;
+using Zue.Common;
 
-namespace Extensions.BaseClass
+namespace Zue.BaseClass
 {
     // https://docs.microsoft.com/en-us/dotnet/core/extensions/timer-service
     public interface ITimedService<T>
@@ -13,7 +15,7 @@ namespace Extensions.BaseClass
         Task ExecuteAsync(CancellationToken cancellationToken = default);
     }
     
-    public struct SchedulingOptions
+    public class SchedulingOptions
     {
         public string Schedule { get; set; } = "0 5 ? * *";
         public TimeSpan Timeout { get; set; } = TimeSpan.FromHours(23);
@@ -30,7 +32,7 @@ namespace Extensions.BaseClass
         protected readonly Task _completedTask = Task.CompletedTask;
         protected readonly CancellationToken _ct;
         protected CancellationTokenSource _cts;
-        protected SchedulingOptions? _scheduling;
+        protected SchedulingOptions _scheduling;
         protected string _schedule;
         private TimeSpan _timeout;
         protected TimeSpan _restartDelay;
@@ -39,6 +41,7 @@ namespace Extensions.BaseClass
         protected TimeSpan _startDelay;
         protected TimeSpan _finishDelay;
         private uint _executionCount = 0;
+        protected const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
         public TimerBase(IServiceProvider serviceProvider)
         {
@@ -115,7 +118,7 @@ namespace Extensions.BaseClass
         {
             //_logger.LogTrace("{0} is scheduling the next job.", _name);
             var scheduledStart = GetScheduledStart();
-            if (scheduledStart is not null)
+            if (scheduledStart != null)
             {
                 _scheduledStart = scheduledStart.Value.DateTime;
                 _scheduledFinish = _scheduledStart.Add(_timeout);
@@ -161,25 +164,25 @@ namespace Extensions.BaseClass
             var done = new CancellationTokenSource(_finishDelay);
             _cts = CancellationTokenSource.CreateLinkedTokenSource(_ct, done.Token);
             var invokeCount = Interlocked.Increment(ref _executionCount);
-            string startTime = DateTime.Now.ToString(TimeMetrics.DateTimeFormat);
-            string finishTime = _scheduledFinish.ToString(TimeMetrics.DateTimeFormat);
+            string startTime = DateTime.Now.ToString(DateTimeFormat);
+            string finishTime = _scheduledFinish.ToString(DateTimeFormat);
             _logger.LogDebug("{0}_{1} started at {2}, scheduled to work for {3:c} until {4}.",
                 _name, invokeCount, startTime, _finishDelay, finishTime);
             try
             {
                 await ExecuteAsync(_cts.Token);
                 _logger.LogDebug("{0}_{1} finished at {2}.",
-                    _name, invokeCount, DateTime.Now.ToString(TimeMetrics.DateTimeFormat));
+                    _name, invokeCount, DateTime.Now.ToString(DateTimeFormat));
             }
             catch (OperationCanceledException) // includes TaskCanceledException
             {
                 _logger.LogDebug("{0}_{1} cancelled at {2}.",
-                    _name, invokeCount, DateTime.Now.ToString(TimeMetrics.DateTimeFormat));
+                    _name, invokeCount, DateTime.Now.ToString(DateTimeFormat));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{0} failed to complete, trying again in {1:c}.", _name, _restartDelay);
-                startTime = DateTime.Now.Add(_restartDelay).ToString(TimeMetrics.DateTimeFormat); // fixes the culture format
+                startTime = DateTime.Now.Add(_restartDelay).ToString(DateTimeFormat); // fixes the culture format
                 _logger.LogInformation("{0} is waiting for the restart time of {1}.", _name, startTime);
                 await Task.Delay(_restartDelay, _cts.Token);
                 await ExecuteJobAsync();
@@ -231,7 +234,7 @@ namespace Extensions.BaseClass
             _timer = new Timer(TimerCallback, null, Timeout.Infinite, Timeout.Infinite);
             if (_startDelay > TimeSpan.Zero)
             {
-                string startTime = _scheduledStart.ToString(TimeMetrics.DateTimeFormat); // fixes the culture format
+                string startTime = _scheduledStart.ToString(DateTimeFormat); // fixes the culture format
                 _logger.LogDebug("{0} is waiting {1:c} for the start time of {2}.", _name, _startDelay, startTime);
             }
             _timer?.Change(_startDelay, _finishDelay);
@@ -297,7 +300,7 @@ namespace Extensions.BaseClass
             _timer.Elapsed += TimerCallback;
             if (_startDelay > TimeSpan.Zero)
             {
-                string startTime = _scheduledStart.ToString(TimeMetrics.DateTimeFormat); // fixes the culture format
+                string startTime = _scheduledStart.ToString(DateTimeFormat); // fixes the culture format
                 _logger.LogDebug("{0} is waiting {1:c} for the start time of {2}.", _name, _startDelay, startTime);
                 await Task.Delay(_startDelay, _ct);
             }

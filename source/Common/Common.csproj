@@ -6,7 +6,7 @@
 	<Nullable>enable</Nullable>
     <Authors>Daniel Collingwood</Authors>
 	<Company>Zue</Company>
-    <PackageId>Zue.Common</PackageId>
+    <PackageId>Zue.Helpers.Common</PackageId>
     <Version>1.0.0</Version>
   </PropertyGroup>
 
