@@ -2,6 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Zue.Common
 {
+    /// <summary>
+    /// <seealso cref="https://github.com/dotnet/roslyn/blob/9806069c7c668ae938f783c77c2d3c453febca53/src/Compilers/Core/Portable/InternalUtilities/EnumerableExtensions.cs"/>
+    /// </summary>
     public static class IEnumerableExtensions
     {
         public static bool IsNullOrEmpty<T>(
@@ -31,6 +34,9 @@ namespace Zue.Common
             => data is null ? "" : string.Join(div,
                 data.Select(o => o?.ToString() ?? ""));
 
+        public static IEnumerable<TOut> SelectNotNull<TIn, TOut>(this IEnumerable<TIn?>? c, Func<TIn?, TOut> toDto) where TIn : class =>
+            c?.Where(c => c != null).Select(toDto) ?? Array.Empty<TOut>();
+        
         public static IEnumerable<string> SplitToString(
             this string str, params char[] chars)
         {
