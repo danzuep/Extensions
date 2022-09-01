@@ -39,12 +39,22 @@ public class AtomicRepository<T> : IAsyncRepository<T> where T : class
         return _context.Set<T>().AsNoTracking();
     }
 
-    public virtual async Task<T?> Get(int id, CancellationToken ct = default)
+    public virtual async Task<T?> GetSingleExisting(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
+    {
+        return await Get().Where(predicate).SingleOrDefaultAsync(ct);
+    }
+
+    public virtual async Task<T?> GetSingleOrDefaultAsync<T2>(Expression<Func<T, bool>> predicate, Expression<Func<T, T2>> order, CancellationToken ct = default)
+    {
+        return await Get().Where(predicate).OrderByDescending(order).SingleOrDefaultAsync(ct).ConfigureAwait(false);
+    }
+
+    public virtual async Task<T?> FindAsync(int id, CancellationToken ct = default)
     {
         return await _context.Set<T>().FindAsync(id, ct).ConfigureAwait(false);
     }
 
-    public virtual async Task<IList<T>> GetAll(CancellationToken ct = default)
+    public virtual async Task<IList<T>> GetAllAsync(CancellationToken ct = default)
     {
         return await Get().ToListAsync(ct).ConfigureAwait(false);
     }
@@ -54,19 +64,19 @@ public class AtomicRepository<T> : IAsyncRepository<T> where T : class
         return Get().Where(predicate).AsAsyncEnumerable();
     }
 
+    public virtual IAsyncEnumerable<T> GetAsyncEnumerable<T2>(Expression<Func<T, bool>> predicate, Expression<Func<T, T2>> order)
+    {
+        return Get().Where(predicate).OrderByDescending(order).AsAsyncEnumerable();
+    }
+
     public virtual async Task<IList<T>> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
     {
         return await Get().Where(predicate).ToListAsync(ct).ConfigureAwait(false);
     }
 
-    public virtual async Task<IList<T>> Get<T2>(Expression<Func<T, bool>> predicate, Expression<Func<T, T2>> order, CancellationToken ct = default)
+    public virtual async Task<IList<T>> GetAsync<T2>(Expression<Func<T, bool>> predicate, Expression<Func<T, T2>> order, CancellationToken ct = default)
     {
-        return await Get().Where(predicate).OrderBy(order).ToListAsync(ct).ConfigureAwait(false);
-    }
-
-    public virtual async Task<T?> GetSingleExisting(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
-    {
-        return await Get().Where(predicate).SingleOrDefaultAsync(ct);
+        return await Get().Where(predicate).OrderByDescending(order).ToListAsync(ct).ConfigureAwait(false);
     }
 
     protected async Task<bool> AddOrUpdate(T item, Expression<Func<T, bool>> predicate, CancellationToken ct = default)
