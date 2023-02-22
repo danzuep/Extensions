@@ -68,6 +68,14 @@ namespace Zue.Common
             return list ?? Array.Empty<T>();
         }
 
+        public static List<T> TryAddRange<T>(
+            this List<T> list, IEnumerable<T> items)
+        {
+            if (list != null && items != null)
+                list.AddRange(items.Where(i => i != null));
+            return list ?? new List<T>();
+        }
+
         public static IList<TResult> FunctionAdd<TSource, TResult>(
             this IEnumerable<TSource> items, Func<TSource, TResult> method, CancellationToken ct = default)
         {

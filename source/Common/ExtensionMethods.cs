@@ -4,7 +4,7 @@ namespace Zue.Common
 {
     public static class ExtensionMethods
     {
-        public static bool IsValid<T>([NotNullWhen(true)] this T? person) => person is not null;
+        public static bool IsValid<T>([NotNullWhen(true)] this T person) => person is not null;
 
         public static bool EqualsThis(this string strA, string strB) =>
             string.Equals(strA, strB, StringComparison.OrdinalIgnoreCase);
